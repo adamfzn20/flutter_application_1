@@ -12,71 +12,45 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Login Screen'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Consumer<AuthProvider>(builder: (context, controller, _) {
-            return Form(
-              key: controller.formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextFormField(
-                    controller: controller.emailController,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Masukan Email',
-                    ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Consumer<AuthProvider>(builder: (context, controller, _) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    controller.signInWithGoogle();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[300],
                   ),
-                  TextFormField(
-                    controller: controller.passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      hintText: 'Masukan Password',
-                      suffixIcon: IconButton(
-                        icon: Icon(controller.passwordObscureText
-                            ? Icons.visibility_off_sharp
-                            : Icons.visibility),
-                        onPressed: () {
-                          controller.passwordObscureTextStatus();
-                        },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Image(
+                          image: AssetImage('assets/google.png'),
+                        ),
                       ),
-                    ),
-                    obscureText: controller.passwordObscureText,
+                      Text('Login With Google'),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      String email = controller.emailController.text.trim();
-                      String password =
-                          controller.passwordController.text.trim();
-
-                      await controller.signInWithEmailAndPassword(
-                          email, password);
-                    },
-                    child: const Text('Login'),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      // controller.handleSignIn(context);
-                    },
-                    child: const SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: Image(
-                        image: AssetImage('assets/google.png'),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            );
-          }),
-        ),
+              const SizedBox(
+                height: 16,
+              ),
+              Visibility(
+                visible: controller.visible,
+                child: const Text("Welcome!"),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
