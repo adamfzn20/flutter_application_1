@@ -1,58 +1,58 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/model/media_model.dart';
 import 'package:flutter_application_1/view/media/media_provider.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MediaPage extends StatelessWidget {
+  const MediaPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     var mediaProvider = Provider.of<MediaProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Media')),
+      appBar: AppBar(title: const Text('Media')),
       body: Column(
         children: [
           ElevatedButton(
             onPressed: () async {
-              final picker = ImagePicker();
-              final XFile? pickedFile =
-                  await picker.pickImage(source: ImageSource.gallery);
-
-              if (pickedFile != null) {
-                // Handle the picked image file
-                File imageFile = File(pickedFile.path);
-                // Call the method to add the image to the provider
-                Provider.of<MediaProvider>(context, listen: false)
-                    .addImage(imageFile);
-              }
+              await _pickAndUploadMedia(context, MediaType.image);
             },
-            child: Text('Upload Image'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              // Open the video picker
-              final picker = ImagePicker();
-              final pickedFile =
-                  await picker.pickVideo(source: ImageSource.gallery);
-
-              if (pickedFile != null) {}
-            },
-            child: Text('Upload Video'),
+            child: const Text('Upload Image'),
           ),
           Expanded(
             child: ListView.builder(
               itemCount: mediaProvider.mediaItems.length,
               itemBuilder: (context, index) {
-                var media = mediaProvider.mediaItems[index];
-                return ListTile(
-                  title: Text('Media ${index + 1}'),
-                  subtitle: Text(media.type),
-                  leading: media.type == 'image'
-                      ? Image.file(media.file,
-                          height: 50, width: 50, fit: BoxFit.cover)
-                      : Icon(Icons.videocam),
+                Media media = mediaProvider.mediaItems[index];
+                List<String> pathSegments = media.file.path.split('/');
+                String fileName =
+                    pathSegments.isNotEmpty ? pathSegments.last : '';
+
+                return Card(
+                  margin: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Image.file(
+                        media.file,
+                        height: 200, // Set the desired height for the image
+                        fit: BoxFit.cover,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          fileName,
+                          style: const TextStyle(fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -60,5 +60,78 @@ class MediaPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _pickAndUploadMedia(
+      BuildContext context, MediaType mediaType) async {
+    final picker = ImagePicker();
+    final source = await showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera),
+              title: const Text('Take a Photo'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from Gallery'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (source == null) return;
+
+    XFile? pickedFile;
+    if (source == ImageSource.camera) {
+      pickedFile = await picker.pickImage(source: source);
+    } else {
+      pickedFile = await picker.pickVideo(source: source);
+    }
+
+    if (pickedFile != null) {
+      File mediaFile = File(pickedFile.path);
+      if (context.mounted) {
+        await _uploadMedia(context, mediaFile, mediaType);
+      }
+    }
+  }
+
+  Future<void> _uploadMedia(
+      BuildContext context, File mediaFile, MediaType mediaType) async {
+    try {
+      final userId =
+          Provider.of<MediaProvider>(context, listen: false).getCurrentUserId();
+      if (userId == null) {
+        print('User not authenticated');
+        return;
+      }
+
+      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      final storageReference = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('$userId/$fileName');
+
+      final uploadTask = storageReference.putFile(mediaFile);
+
+      await uploadTask.whenComplete(() async {
+        final downloadURL = await storageReference.getDownloadURL();
+        Media media = Media(
+            type: mediaType.toString(), file: mediaFile, url: downloadURL);
+        if (context.mounted) {
+          Provider.of<MediaProvider>(context, listen: false).addMedia(media);
+        }
+      });
+
+      print('Media uploaded successfully');
+    } catch (error) {
+      print('Failed to upload media: $error');
+    }
   }
 }
