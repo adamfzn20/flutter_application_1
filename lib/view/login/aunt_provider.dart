@@ -2,42 +2,34 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  late SharedPreferences _preferences;
 
   bool visible = false;
-
   bool passwordObscureText = true;
   UserModel? _user;
 
   UserModel? get user => _user;
 
-  // Future<void> signInWithEmailAndPassword(String email, String password) async {
-  //   try {
-  //     UserCredential authResult = await _auth.signInWithEmailAndPassword(
-  //       email: email,
-  //       password: password,
-  //     );
+  AuthProvider() {
+    _initPreferences();
+  }
 
-  //     User? firebaseUser = authResult.user;
+  Future<void> _initPreferences() async {
+    _preferences = await SharedPreferences.getInstance();
+  }
 
-  //     if (firebaseUser != null) {
-  //       _user =
-  //           UserModel(uid: firebaseUser.uid, email: firebaseUser.email ?? '');
-  //     }
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
+  Future<void> _saveLoginState(bool isLoggedIn) async {
+    await _preferences.setBool('isLoggedIn', isLoggedIn);
+  }
 
-  //   notifyListeners();
-  // }
-
-  // void passwordObscureTextStatus() {
-  //   passwordObscureText = !passwordObscureText;
-  //   notifyListeners();
-  // }
+  Future<bool> _getLoginState() async {
+    return _preferences.getBool('isLoggedIn') ?? false;
+  }
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
@@ -53,11 +45,18 @@ class AuthProvider extends ChangeNotifier {
         );
         await _auth.signInWithCredential(credential);
         visible = true;
+        await _saveLoginState(true); // Save login state to shared preferences
         notifyListeners();
       }
     } catch (e) {
       print(e.toString());
     }
     return null;
+  }
+
+  Future<void> checkLoginStatus() async {
+    final bool isLoggedIn = await _getLoginState();
+    visible = isLoggedIn;
+    notifyListeners();
   }
 }

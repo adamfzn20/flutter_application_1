@@ -67,6 +67,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '767426331019',
     projectId: 'tes-app-001',
     storageBucket: 'tes-app-001.appspot.com',
+    androidClientId: '767426331019-p0lq8rbq2jimhj6jadurloa7ff76oigb.apps.googleusercontent.com',
+    iosClientId: '767426331019-hvpblpfds4mm1k4juu4rn8kng2qn6tf8.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterApplication1',
   );
 
@@ -76,6 +78,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '767426331019',
     projectId: 'tes-app-001',
     storageBucket: 'tes-app-001.appspot.com',
+    androidClientId: '767426331019-p0lq8rbq2jimhj6jadurloa7ff76oigb.apps.googleusercontent.com',
+    iosClientId: '767426331019-g1b0a901861kcruckunphk2i6cgh98of.apps.googleusercontent.com',
     iosBundleId: 'com.example.flutterApplication1.RunnerTests',
   );
 }

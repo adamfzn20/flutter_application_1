@@ -14,34 +14,29 @@ class AddContactPage extends StatelessWidget {
     var contactProvider = Provider.of<ContactProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Add Contact')),
+      appBar: AppBar(title: const Text('Add Contact')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: nameController,
-              decoration: InputDecoration(labelText: 'Name'),
+              decoration: const InputDecoration(labelText: 'Name'),
             ),
             TextField(
               controller: phoneController,
-              decoration: InputDecoration(labelText: 'Phone Number'),
+              decoration: const InputDecoration(labelText: 'Phone Number'),
+              keyboardType: TextInputType.phone,
             ),
             ElevatedButton(
-              onPressed: () {
-                var name = nameController.text;
-                var phone = phoneController.text;
-                var newContact = Contact(name: name, phoneNumber: phone);
+              onPressed: () async {
+                String name = nameController.text;
+                String phone = phoneController.text;
+                Contact newContact = Contact(name: name, phoneNumber: phone);
                 contactProvider.addContact(newContact);
-
-                // Add the contact to Firebase here
-                // FirebaseFirestore.instance
-                //     .collection('contacts')
-                //     .add({'name': name, 'phone': phone});
-
                 Navigator.pop(context);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         ),
