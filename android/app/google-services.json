@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "767426331019",
+    "project_id": "tes-app-001",
+    "storage_bucket": "tes-app-001.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767426331019:android:47db521608638f73caaf8e",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMDG--bK1WBslCMR797LrXoayKB5kNWVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
