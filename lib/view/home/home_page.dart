@@ -3,6 +3,7 @@ import 'package:flutter_application_1/view/contact/contact_page.dart';
 import 'package:flutter_application_1/view/login/login_page.dart';
 // import 'package:flutter_application_1/view/map/map_page.dart';
 import 'package:flutter_application_1/view/media/media_page.dart';
+// import 'package:flutter_application_1/view/session/session_page.dart';
 import 'package:flutter_application_1/widget/button_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -42,7 +43,8 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ContactPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const ContactPage()),
                     );
                   }),
               CustomButton(
@@ -51,12 +53,20 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MediaPage()),
+                    MaterialPageRoute(builder: (context) => const MediaPage()),
                   );
                 },
               ),
               CustomButton(
-                  icon: Icons.data_usage, text: "Data", onPressed: () {}),
+                  icon: Icons.data_usage,
+                  text: "Data  Session",
+                  onPressed: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => const SessionsPage()),
+                    // );
+                  }),
             ],
           ),
         ),

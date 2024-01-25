@@ -29,7 +29,7 @@ class MediaPage extends StatelessWidget {
               itemCount: mediaProvider.mediaItems.length,
               itemBuilder: (context, index) {
                 Media media = mediaProvider.mediaItems[index];
-                List<String> pathSegments = media.file.path.split('/');
+                List<String> pathSegments = media.file!.path.split('/');
                 String fileName =
                     pathSegments.isNotEmpty ? pathSegments.last : '';
 
@@ -39,8 +39,8 @@ class MediaPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Image.file(
-                        media.file,
-                        height: 200, // Set the desired height for the image
+                        media.file!,
+                        height: 200,
                         fit: BoxFit.cover,
                       ),
                       Padding(

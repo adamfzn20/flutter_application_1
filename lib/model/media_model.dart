@@ -1,9 +1,17 @@
 import 'dart:io';
 
 class Media {
-  final String type;
-  final File file;
+  final String? id; // Add this field
+  final String? type;
+  final File? file;
   final String? url;
 
-  Media({required this.type, required this.file, this.url});
+  Media({this.id, this.type, this.file, this.url});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'type': type,
+      'url': url,
+    };
+  }
 }

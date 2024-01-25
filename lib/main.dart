@@ -6,6 +6,7 @@ import 'package:flutter_application_1/view/home/home_page.dart';
 import 'package:flutter_application_1/view/login/aunt_provider.dart';
 import 'package:flutter_application_1/view/map/map_provider.dart';
 import 'package:flutter_application_1/view/media/media_provider.dart';
+// import 'package:flutter_application_1/view/session/session_provider.dart';
 
 import 'package:provider/provider.dart';
 
@@ -33,8 +34,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MediaProvider()),
         // ChangeNotifierProvider(create: (_) => MapProvider()),
+        // ChangeNotifierProvider(create: (context) => SessionProvider()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Firebase Auth Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
