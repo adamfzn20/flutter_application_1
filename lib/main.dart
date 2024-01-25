@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/contact/contact_provider.dart';
+import 'package:flutter_application_1/view/data_storage/data_storage_provider.dart';
 import 'package:flutter_application_1/view/home/home_page.dart';
 import 'package:flutter_application_1/view/login/aunt_provider.dart';
 import 'package:flutter_application_1/view/map/map_provider.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => MediaProvider()),
         ChangeNotifierProvider(create: (_) => MapProvider()),
-        // ChangeNotifierProvider(create: (context) => SessionProvider()),
+        ChangeNotifierProvider(create: (context) => DataStorageProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

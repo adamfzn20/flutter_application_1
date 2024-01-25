@@ -7,8 +7,22 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
-class MediaPage extends StatelessWidget {
+class MediaPage extends StatefulWidget {
   const MediaPage({super.key});
+
+  @override
+  State<MediaPage> createState() => _MediaPageState();
+}
+
+class _MediaPageState extends State<MediaPage> {
+  late MediaProvider mediaProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    mediaProvider = Provider.of<MediaProvider>(context, listen: false);
+    mediaProvider.getStorageList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,48 +30,37 @@ class MediaPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Media')),
-      body: Column(
-        children: [
-          ElevatedButton(
-            onPressed: () async {
-              await _pickAndUploadMedia(context, MediaType.image);
-            },
-            child: const Text('Upload Image'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: mediaProvider.mediaItems.length,
-              itemBuilder: (context, index) {
-                Media media = mediaProvider.mediaItems[index];
-                List<String> pathSegments = media.file!.path.split('/');
-                String fileName =
-                    pathSegments.isNotEmpty ? pathSegments.last : '';
-
-                return Card(
-                  margin: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Image.file(
-                        media.file!,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          fileName,
-                          style: const TextStyle(fontSize: 16),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+      body: ListView.builder(
+        itemCount: mediaProvider.fileUrls.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Image.network(
+                  mediaProvider.fileUrls[index],
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    mediaProvider.fileUrls[index],
+                    style: const TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
                   ),
-                );
-              },
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await _pickAndUploadMedia(context, MediaType.image);
+        },
+        child: const Icon(Icons.upload_file),
       ),
     );
   }
@@ -118,16 +121,16 @@ class MediaPage extends StatelessWidget {
           .ref()
           .child('$userId/$fileName');
 
-      final uploadTask = storageReference.putFile(mediaFile);
+      storageReference.putFile(mediaFile);
 
-      await uploadTask.whenComplete(() async {
-        final downloadURL = await storageReference.getDownloadURL();
-        Media media = Media(
-            type: mediaType.toString(), file: mediaFile, url: downloadURL);
-        if (context.mounted) {
-          Provider.of<MediaProvider>(context, listen: false).addMedia(media);
-        }
-      });
+      // await uploadTask.whenComplete(() async {
+      //   final downloadURL = await storageReference.getDownloadURL();
+      //   Media media = Media(
+      //       type: mediaType.toString(), file: mediaFile, url: downloadURL);
+      //   if (context.mounted) {
+      //     Provider.of<MediaProvider>(context, listen: false).addMedia(media);
+      //   }
+      // });
 
       print('Media uploaded successfully');
     } catch (error) {

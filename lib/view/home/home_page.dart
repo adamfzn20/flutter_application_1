@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/contact/contact_page.dart';
+import 'package:flutter_application_1/view/data_storage/data_storage_page.dart';
 import 'package:flutter_application_1/view/login/login_page.dart';
 import 'package:flutter_application_1/view/map/map_page.dart';
 // import 'package:flutter_application_1/view/map/map_page.dart';
@@ -60,13 +61,13 @@ class HomePage extends StatelessWidget {
               ),
               CustomButton(
                   icon: Icons.data_usage,
-                  text: "Data  Session",
+                  text: "Data  Storage",
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => const SessionsPage()),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DataStoragePage()),
+                    );
                   }),
             ],
           ),
