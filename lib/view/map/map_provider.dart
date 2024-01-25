@@ -1,26 +1,37 @@
-// import 'package:flutter/material.dart';
-// import 'package:location/location.dart';
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
-// class MapProvider extends ChangeNotifier {
-//   LocationData? _currentLocation;
+class MapProvider extends ChangeNotifier {
+  Position? _currentPosition;
 
-//   LocationData? get currentLocation => _currentLocation;
+  Position? get currentPosition => _currentPosition;
 
-//   Future<void> updateLocation() async {
-//     Location location = Location();
-//     _currentLocation = await location.getLocation();
-//     notifyListeners();
-//   }
+  Future<void> updateCurrentLocation() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
-//   void shareLocation() {
-//     if (_currentLocation != null) {
-//       final latitude = _currentLocation!.latitude;
-//       final longitude = _currentLocation!.longitude;
-//       final message =
-//           "Check out my location: https://maps.google.com/?q=$latitude,$longitude";
-//       // Share.share(message);
-//     } else {
-//       print("Location not available");
-//     }
-//   }
-// }
+      _currentPosition = position;
+      notifyListeners();
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> launchMaps(double latitude, double longitude) async {
+    String url =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+    try {
+      if (await canLaunchUrlString(url)) {
+        await launchUrlString(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/view/contact/contact_page.dart';
 import 'package:flutter_application_1/view/login/login_page.dart';
+import 'package:flutter_application_1/view/map/map_page.dart';
 // import 'package:flutter_application_1/view/map/map_page.dart';
 import 'package:flutter_application_1/view/media/media_page.dart';
 // import 'package:flutter_application_1/view/session/session_page.dart';
@@ -32,10 +33,10 @@ class HomePage extends StatelessWidget {
                   icon: Icons.location_on,
                   text: "Map",
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => const MapPage()),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MapPage()),
+                    );
                   }),
               CustomButton(
                   icon: Icons.contact_phone,
