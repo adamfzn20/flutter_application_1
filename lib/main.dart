@@ -1,26 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/view/contact/contact_provider.dart';
-import 'package:flutter_application_1/view/data_storage/data_storage_provider.dart';
-import 'package:flutter_application_1/view/home/home_page.dart';
-import 'package:flutter_application_1/view/login/aunt_provider.dart';
-import 'package:flutter_application_1/view/map/map_provider.dart';
-import 'package:flutter_application_1/view/media/media_provider.dart';
-// import 'package:flutter_application_1/view/session/session_provider.dart';
-
-import 'package:provider/provider.dart';
-
-import 'firebase_options.dart';
+import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
+import 'initializer.dart';
+import 'routes/page_names.dart';
+import 'routes/page_routes.dart';
+import 'themes/app_theme.dart';
+import 'utills/localization/app_translation.dart';
+import 'utills/localization/locale_helper.dart';
 
 void main() async {
+  if (kDebugMode) {
+    debugPrint = (String? message, {int? wrapWidth}) =>
+        debugPrintSynchronously(message, wrapWidth: wrapWidth);
+  } else {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: true,
-  );
+  await Initializer.init();
+
   runApp(const MyApp());
 }
 
@@ -29,22 +28,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ContactProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => MediaProvider()),
-        ChangeNotifierProvider(create: (_) => MapProvider()),
-        ChangeNotifierProvider(create: (context) => DataStorageProvider()),
-      ],
-      child: MaterialApp(
+    return Sizer(builder: (context, orientation, deviceType) {
+      return GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Firebase Auth Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const HomePage(),
-      ),
-    );
+        translations: AppTranslation(),
+        locale: LocaleHelper().getCurrentLocale(),
+        fallbackLocale: LocaleHelper().fallbackLocale,
+        initialRoute: PageName.LOADER,
+        getPages: PageRoutes.pages,
+        theme: AppTheme.buildThemeData(false),
+        builder: (BuildContext context, child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: child ?? Container(),
+          );
+        },
+      );
+    });
   }
 }
